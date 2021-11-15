@@ -13,6 +13,8 @@ sequelize.sync({
   // force: true,
 });
 
+app.use("/movies", controllers.movie);
+
 const user = require("./controllers/usercontroller");
 app.use("/user", user);
 
