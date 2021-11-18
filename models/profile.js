@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const Profile = db.define("profileg", {
+const Profile = db.define("profile", {
   bio: {
     type: DataTypes.TEXT,
     allowNull: false,
@@ -22,6 +22,9 @@ const Profile = db.define("profileg", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  // userId: {
+  //   type: DataTypes.INTEGER,
+  // },
 });
 
 module.exports = Profile;

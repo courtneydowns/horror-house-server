@@ -22,10 +22,10 @@ const Review = db.define("review", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  imdbId: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+  // userId: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
 });
 
 module.exports = Review;

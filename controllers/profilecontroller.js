@@ -5,12 +5,14 @@ const validateSession = require("../middleware/validateSession");
 
 /*CREATE PROFILE*/
 router.post("/create", validateSession, function (req, res) {
+  const { bio, favoriteHorrorMovies, recommend, dontRecomment, wantToWatch } =
+    req.body;
   const profileCreate = {
-    bio: req.body.profile.bio,
-    favoriteHorrorMovies: req.body.profile.favoriteHorrorMovies,
-    recommend: req.body.profile.recommend,
-    dontRecommend: req.body.profile.dontRecommend,
-    wantToWatch: req.body.profile.wantToWatch,
+    bio,
+    favoriteHorrorMovies,
+    recommend,
+    dontRecommend,
+    wantToWatch,
   };
   Profile.create(profileCreate)
     .then((post) => res.status(200).json(post))
@@ -19,7 +21,8 @@ router.post("/create", validateSession, function (req, res) {
 
 /*EDIT PROFILE*/
 router.put("/edit", validateSession, function (req, res) {
-  const query = { where: { userId: req.user.id }, returning: true };
+  const { id } = req.user;
+  const query = { where: { id }, returning: true };
   Profile.update(req.body.profile, query)
     .then((profile) =>
       res.status(200).json({
@@ -42,9 +45,11 @@ router.get("/", validateSession, function (req, res) {
 
 /*GET USER'S PROFILE*/
 router.get("/:username", validateSession, function (req, res) {
+  const { id } = req.params;
+  const { userName } = req.user;
   const getUserProfile = {
-    id: req.params.id,
-    userName: req.user.userName,
+    id,
+    userName,
   };
   Profile.findOne(getUserProfile)
     .then((profile) => res.status(200).json(profile))

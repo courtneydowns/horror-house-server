@@ -13,11 +13,20 @@ app.use("/user", user);
 let review = require("./controllers/reviewcontroller");
 app.use("/review", review);
 
-const controllers = require("./controllers");
+let like = require("./controllers/likecontroller");
+app.use("/like", like);
 
-app.use("/profile", controllers.profile);
-app.use("/comment", controllers.comment);
-app.use("/movie", controllers.movie);
+let profile = require("./controllers/profilecontroller");
+app.use("/profile", profile);
+
+let comment = require("./controllers/commentcontroller");
+app.use("/comment", comment);
+
+let movie = require("./controllers/moviecontroller");
+app.use("/movie", movie);
+
+let favorite = require("./controllers/favoritecontroller");
+app.use("favorite", favorite);
 
 sequelize.sync({
   // force: true,
