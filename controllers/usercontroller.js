@@ -1,57 +1,89 @@
-let express = require("express");
+const express = require("express");
 const { User } = require("../models");
-let router = express.Router();
+const { Op } = require("sequelize");
+const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const validateSession = require("../middleware/validateSession");
 
-/*SIGN UP*/
-router.post("/signup", function (req, res) {
-  const { profileImage, username, email, isAdmin } = req.body;
+/*SIGN UP FOR NEW USER*/
+router.post("/signup", (req, res) => {
+  const { password, email, username, profileImage } = req.body;
 
   User.create({
-    profileImage,
+    passwordhash: bcrypt.hashSync(password, 13),
     username,
     email,
-    password: bcrypt.hashSync(password, 13),
-    isAdmin,
+    profileImage,
   })
-    .then(function signupSuccess(user) {
-      const token = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: 60 * 60 * 270,
-        }
-      );
-      res.status(200).json({
-        user: user,
-        message: "Your account has been successfully created!",
+    .then((user) => {
+      let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+        expiresIn: 60 * 60 * 24,
+      });
+      res.json(200).json({
+        user: {
+          id: user.id,
+          username,
+        },
+        message: `Success! Account created for ${username}`,
         sessionToken: token,
+        sucess: true,
       });
     })
-    .catch((err) => res.status(500).json({ error: err }));
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+});
+router.post("/", (req, res) => {
+  const { username, password } = req.body;
+  User.findOne({
+    where: { username },
+  })
+    .then((user) => {
+      console.log(user);
+      if (user) {
+        bcrypt.compare(password, user.passwordhash, (err, match) => {
+          if (match) {
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+              expiresIn: 60 * 60 * 24,
+            });
+            delete user.passwordhash;
+            res.status(200).json({
+              user,
+              message: `Success! ${username.name} logged in!`,
+              success: true,
+              sessionToken: token,
+            });
+          } else {
+            res.status(502).send({ message: "Incorrect password" });
+          }
+        });
+      } else {
+        res.status(500).json({ message: "User does not exist" });
+      }
+    })
+    .catch((err) =>
+      res.status(500).json({ message: "Something went wrong", err })
+    );
 });
 
 /*LOGIN*/
-router.post("/", function (req, res) {
-  const { username, password } = req.body;
+router.post("/", (req, res) => {
   console.log(process.env.JWT_SECRET);
+  const { username, password } = req.body;
   User.findOne({
     where: {
-      username,
+      username: { username },
     },
   })
-    .then(function loginSuccess(user) {
+    .then((user) => {
       if (user) {
-        bcrypt.compare(password, user.password, (err, match) => {
+        bcrypt.compare(password, user.passwordhash, (err, match) => {
           if (match) {
-            let token = jwt.sign(
-              { id: user.id, username: user.username },
-              process.env.JWT_SECRET,
-              { expiresIn: 60 * 60 * 270 }
-            );
-
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+              expiresIn: 60 * 60 * 270,
+            });
+            delete user.passwordhash;
             res.status(200).json({
               user: user,
               message: "User successfully logged in!",
@@ -75,95 +107,24 @@ router.post("/update-password", validateSession, async (req, res) => {
     const { password, newPassword } = req.body;
     const user = await User.findOne({ where: { id } });
     user
-      ? bcrypt.compare(password, user.password, async (err, match) => {
+      ? bcrypt.compare(password, user.passwordhash, async (err, match) => {
           if (match) {
-            //CHANGE PASSWORD
-            const password = bcrypt.hashSync(newPassword, 13);
-            await user.update({ password });
-            res.status(200).json({ success: true });
+            //change password
+            const passwordhash = bcrypt.hashSync(newPassword, 13);
+            await user.update({ passwordhash });
+            res.status(200).json({ sucess: true });
           } else {
-            res
-              .status(502)
-              .json({ message: "Incorrect password", err, success: false });
+            res.status(502).json({
+              message: "Incorrect Password!",
+              err,
+              sucess: false,
+            });
           }
         })
-      : res.status(500).json({ message: "Oops. Something went wrong" });
+      : res.status(500).json({ message: "Oops. Something went wrong!" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: error, err });
-  }
-});
-
-/*FOLLOW USER*/
-router.post("/follow/:userId", validateSession, async (req, res) => {
-  try {
-    const { user } = req;
-    const { userId } = req.params;
-    const followed = await User.findOne({ where: { id: parseInt(userId) } });
-    const result2 = await followed.update({
-      followers: [...newSet([...followed.followers, parseInt(user.id)])],
-    });
-    const result = await user.update({
-      following: [...new Set([...user.following, parseInt(userId)])],
-    });
-    res.status(200).json({
-      success: true,
-      following: result.following,
-      followers: result2.followers,
-      message: "Success!",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error, message: "Oops. Something went wrong!" });
-  }
-});
-
-/*UNFOLLOW USER*/
-router.post("unfollow/:userId", validateSession, async (req, res) => {
-  try {
-    const { user } = req;
-    const { userId } = req.params;
-    const unfollowed = await User.findOne({ where: { id: parseInt(userId) } });
-    const result2 = await unfollowed.update({
-      followers: [
-        ...new Set([
-          ...unfollowed.followers.filter((f) => f !== parseInt(user.id)),
-        ]),
-      ],
-    });
-    const result = await user.update({
-      following: [
-        ...new Set([...user.following.filter((f) => f !== parseInt(userId))]),
-      ],
-    });
-    res.status(200).json({
-      success: true,
-      following: result.following,
-      follwers: result2.followers,
-      message: "Success!",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error, err);
-  }
-});
-
-/*GET FOLLOWING AND FOLLOWERS*/
-router.get("/follows/:userId", validateSession, async (req, res) => {
-  try {
-    const { following, followers } =
-      req.user.id === req.params.userId
-        ? req.user
-        : await User.findOne({
-            where: { id: req.params.userId },
-          });
-    const users = await User.findAll({
-      where: { id: { [Op.in]: [...new Set([...following, ...followers])] } },
-    });
-    res.status(200).json({ users, success: true, message: "Success!" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error, err);
+    res.status(500).json({ message: "failure", err });
   }
 });
 
@@ -175,16 +136,16 @@ router.get("/search/:string", validateSession, async (req, res) => {
       where: {
         [Op.or]: [{ username: { [Op.iLike]: `%${string}%` } }],
       },
-      attributes: ["username", "id"],
+      attributes: ["username", "profilePhoto", "id"],
       limit: 6,
     });
     const users = usersRaw.map((user) => {
-      return { ...user.dataValues, url: `user/search/${user.id}` };
+      return { ...user.dataValues, url: `/main/profile/${user.id}` };
     });
-    res.status(200).json({ success: true, users, message: "Success!" });
+    res.status(200).json({ success: true, users, message: "success!" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error, message: "Oops. Something went wrong!" });
+    res.status(500).json({ error, message: "Something went wrong!" });
   }
 });
 

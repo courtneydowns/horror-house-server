@@ -6,7 +6,7 @@ let validateSession = require("../middleware/validateSession");
 /*ADDING FAVORITE*/
 router.post("/", validateSession, function (req, res) {
   const favorite = {
-    numberofFavorites: req.body.likes.numberOfFavorites,
+    numberofFavorites: req.body.favorite.numberOfFavorites,
   };
   Favorite.create(favorite)
     .then((favorite) => res.status(200).json(favorite))

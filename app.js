@@ -4,11 +4,11 @@ const app = express();
 const sequelize = require("./db");
 const PORT = process.env.port;
 
-app.use(require("./middleware/headers"));
-app.use(express.json());
-
 let user = require("./controllers/usercontroller");
 app.use("/user", user);
+
+app.use(require("./middleware/headers"));
+app.use(express.json());
 
 let review = require("./controllers/reviewcontroller");
 app.use("/review", review);
@@ -26,7 +26,7 @@ let movie = require("./controllers/moviecontroller");
 app.use("/movie", movie);
 
 let favorite = require("./controllers/favoritecontroller");
-app.use("favorite", favorite);
+app.use("/favorite", favorite);
 
 sequelize.sync({
   // force: true,

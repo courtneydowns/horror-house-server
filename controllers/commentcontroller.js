@@ -29,7 +29,7 @@ router.post("/comment/:imdbId", validateSession, function (req, res) {
     notSeenMovie: req.body.comment.notSeenMovie,
     wantToWatchMovie: req.body.comment.wantToWatchMovie,
     userId: req.user.id,
-    id: req.params.imdbId,
+    imdbId: req.params.imdbId,
   };
   Comment.create(commentEntry)
     .then((comment) => res.status(200).json(comment))

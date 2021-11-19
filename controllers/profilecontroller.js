@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { Profile } = require("../models");
+const { Profile, User } = require("../models");
 const validateSession = require("../middleware/validateSession");
 
 /*CREATE PROFILE*/
-router.post("/create", validateSession, function (req, res) {
-  const { bio, favoriteHorrorMovies, recommend, dontRecomment, wantToWatch } =
+router.post("/create", validateSession, async (req, res) => {
+  const { bio, favoriteHorrorMovies, recommend, dontRecommend, wantToWatch } =
     req.body;
   const profileCreate = {
     bio,
