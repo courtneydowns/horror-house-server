@@ -2,56 +2,56 @@ const User = require("./user");
 const Review = require("./review");
 const Profile = require("./profile");
 const Comment = require("./comment");
-const Movie = require("./movie");
-// const Message = require("./message");
-// const Notification = require("./notification");
-// const Conversation = require("./conversation");
-// const ChatNotification = require("./chatNotification");
-// const Like = require("./like");
+const MovieDatabase = require("./movieDatabase");
+const Like = require("./like");
+const Favorite = require("./favorite");
+const SearchResult = require("./movieSearch");
 
-//USER and REVIEW
+//USER
 User.hasMany(Review);
 Review.belongsTo(User);
-
-//USER and PROFILE
 User.hasOne(Profile);
 Profile.belongsTo(User);
-
-//USER and COMMENT
 User.hasMany(Comment);
 Comment.belongsTo(User);
+User.hasMany(Comment);
 
-//MOVIE, REVIEW, COMMENT
-Movie.hasMany(Review);
-Review.belongsTo(Movie);
+//MOVIE SEARCH RESULTS, REVIEW, COMMENT
+SearchResult.hasMany(Review);
+Review.belongsTo(SearchResult);
 Review.hasMany(Comment);
+Comment.belongsTo(Review);
+SearchResult.hasMany(Like);
+
+//MOVIE DATABASE, REVIEW, COMMENT
+MovieDatabase.hasMany(Review);
+Review.belongsTo(MovieDatabase);
+MovieDatabase.hasMany(Comment);
+Comment.belongsTo(Review);
+// Like.hasOne(MovieDatabase);
+MovieDatabase.hasMany(Like);
 
 //LIKES
-// Like.belongsTo(Comment);
-// Comment.hasMany(Like);
+Like.belongsTo(User);
+Like.belongsTo(Comment);
+Comment.hasMany(Like);
+User.hasMany(Like);
 
-//CHAT
-// Conversation.belongsTo(User, { as: "user1" });
-// Conversation.belongsTo(User, { as: "user2" });
-// Message.belongsTo(Conversation);
-// Conversation.hasMany(Message);
-
-//NOTIFICATIONS
-// Notification.belongsTo(User);
-// User.hasMany(Notification);
-
-// ChatNotification.belongsTo(User);
-// User.hasMany(ChatNotification);
+//FAVORITES
+Favorite.belongsTo(User);
+Favorite.belongsTo(MovieDatabase);
+Favorite.belongsTo(SearchResult);
+MovieDatabase.hasMany(Favorite);
+SearchResult.hasMany(Favorite);
+User.hasMany(Favorite);
 
 module.exports = {
   User,
   Review,
   Profile,
   Comment,
-  Movie,
-  // Like,
-  // Conversation,
-  // Message,
-  // Notification,
-  // ChatNotification,
+  SearchResult,
+  MovieDatabase,
+  Like,
+  Favorite,
 };

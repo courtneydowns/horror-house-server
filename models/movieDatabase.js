@@ -26,6 +26,10 @@ const Movie = db.define("movie", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  // id: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: false,
+  // },
   Director: {
     type: DataTypes.TEXT,
     allowNull: false,
