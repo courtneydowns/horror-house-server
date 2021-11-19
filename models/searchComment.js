@@ -1,27 +1,28 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const MovieDatabase = db.define("movie-database", {
-  poster_path: {
+const SearchComment = db.define("comment", {
+  comment: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  seenMovie: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  title: {
+  notSeenMovie: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  overview: {
+  wantToWatchMovie: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  release_date: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  vote_average: {
+  imdbId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    unique: true,
   },
 });
 
-module.exports = MovieDatabase;
+module.exports = SearchComment;

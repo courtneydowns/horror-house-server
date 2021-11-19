@@ -1,52 +1,62 @@
 const User = require("./user");
 const Review = require("./review");
 const Profile = require("./profile");
-const Comment = require("./comment");
+const Comment = require("./searchComment");
 const MovieDatabase = require("./movieDatabase");
 const Like = require("./like");
 const Favorite = require("./favorite");
-const SearchResult = require("./movieSearch");
+const MovieSearch = require("./movieSearch");
+const SearchComment = require("./searchComment");
+const DatabaseComment = require("./databaseComment");
 
-//USER and REVIEW
+//USER
 User.hasMany(Review);
 Review.belongsTo(User);
-
-//USER and PROFILE
 User.hasOne(Profile);
 Profile.belongsTo(User);
-
-//USER and COMMENT
 User.hasMany(Comment);
-Comment.belongsTo(User);
+SearchComment.belongsTo(User);
+DatabaseComment.belongsTo(User);
 
 //MOVIE, REVIEW, COMMENT
-SearchResult.hasMany(Review);
-Review.belongsTo(SearchResult);
-Review.hasMany(Comment);
-Like.hasOne(SearchResult);
-SearchResult.hasMany(Like);
+MovieSearch.hasMany(Review);
+Review.belongsTo(MovieSearch);
+Review.hasMany(SearchComment);
+Review.hasMany(DatabaseComment);
+Like.hasOne(MovieSearch);
 
 //MOVIE, REVIEW, COMMENT, FAVORITE
 MovieDatabase.hasMany(Review);
 Review.belongsTo(MovieDatabase);
-Review.belongsTo(SearchResult);
-searchResult.hasMany(Review);
-Review.hasMany(Comment);
-Favorite.hasOne(MovieDatabase);
+MovieSearch.hasMany(Review);
+Review.hasMany(SearchComment);
+Review.hasMany(DatabaseComment);
+Favorite.belongsTo(MovieDatabase);
 MovieDatabase.hasMany(Favorite);
+Favorite.belongsTo(MovieSearch);
+MovieSearch.hasMany(Favorite);
+
+//MOVIE SEARCH RESULTS, REVIEW, COMMENT
+MovieSearch.hasMany(Review);
+Review.belongsTo(MovieSearch);
+Review.hasMany(SearchComment);
+Review.hasMany(DatabaseComment);
+SearchComment.belongsTo(Review);
+
+//MOVIE DATABASE, REVIEW, COMMENT
+MovieDatabase.hasMany(Review);
+Review.belongsTo(MovieDatabase);
+MovieDatabase.hasMany(DatabaseComment);
+MovieSearch.hasMany(SearchComment);
+DatabaseComment.belongsTo(Review);
+Like.hasOne(MovieDatabase);
 
 //LIKES
 Like.belongsTo(User);
-Like.belongsTo(Comment);
-Comment.hasMany(Like);
 User.hasMany(Like);
 
 //FAVORITES
 Favorite.belongsTo(User);
-Favorite.belongsTo(MovieDatabase);
-MovieDatabase.hasMany(Favorite);
-Favorite.belongsTo(SearchResult);
-SearchResult.hasMany(Favorite);
 User.hasMany(Favorite);
 
 module.exports = {

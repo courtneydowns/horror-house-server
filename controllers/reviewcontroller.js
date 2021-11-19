@@ -1,6 +1,6 @@
 const express = require("express");
-const router = express.Router();
-const { User, Review } = require("../models/review");
+let router = express.Router();
+const { Review } = require("../models/review");
 const validateSession = require("../middleware/validateSession");
 
 // let express = require("express");
