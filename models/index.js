@@ -5,7 +5,7 @@ const Comment = require("./comment");
 const MovieDatabase = require("./movieDatabase");
 const Like = require("./like");
 const Favorite = require("./favorite");
-const MovieSearch = require("./movieSearch");
+const SearchResult = require("./movieSearch");
 
 //USER and REVIEW
 User.hasMany(Review);
@@ -20,15 +20,17 @@ User.hasMany(Comment);
 Comment.belongsTo(User);
 
 //MOVIE, REVIEW, COMMENT
-MovieSearch.hasMany(Review);
-Review.belongsTo(MovieSearch);
+SearchResult.hasMany(Review);
+Review.belongsTo(SearchResult);
 Review.hasMany(Comment);
-Like.hasOne(MovieSearch);
-MovieSearch.hasMany(Like);
+Like.hasOne(SearchResult);
+SearchResult.hasMany(Like);
 
 //MOVIE, REVIEW, COMMENT, FAVORITE
 MovieDatabase.hasMany(Review);
 Review.belongsTo(MovieDatabase);
+Review.belongsTo(SearchResult);
+searchResult.hasMany(Review);
 Review.hasMany(Comment);
 Favorite.hasOne(MovieDatabase);
 MovieDatabase.hasMany(Favorite);
@@ -41,8 +43,10 @@ User.hasMany(Like);
 
 //FAVORITES
 Favorite.belongsTo(User);
-Favorite.belongsTo(Movie);
-Movie.hasMany(Favorite);
+Favorite.belongsTo(MovieDatabase);
+MovieDatabase.hasMany(Favorite);
+Favorite.belongsTo(SearchResult);
+SearchResult.hasMany(Favorite);
 User.hasMany(Favorite);
 
 module.exports = {

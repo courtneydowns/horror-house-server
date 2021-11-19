@@ -1,29 +1,37 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const MovieSearch = db.define("movie-search", {
-  poster_path: {
+const MovieSearch = db.define("search-result", {
+  Poster: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  title: {
+  Title: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  overview: {
+  Plot: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  id: {
+  imdbRating: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  release_date: {
+  Released: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  Runtime: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  Director: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  vote_average: {
-    type: DataTypes.INTEGER,
+  Actors: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
 });

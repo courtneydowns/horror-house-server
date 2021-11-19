@@ -1,9 +1,17 @@
+const user = require("./usercontroller");
+const comment = require("./commentcontroller");
+const SearchResult = require("./searchresultcontroller");
+const profile = require("./profilecontroller");
+const like = require("./likecontroller");
+const favorite = require("./favoritecontroller");
+const databaseMovie = require("./databasemoviecontroller");
+
 module.exports = {
-  usercontroller: require("./usercontroller"),
-  comment: require("./commentcontroller"),
-  movieSearch: require("./movieSearchcontroller"),
-  profile: require("./profilecontroller"),
-  like: require("./likecontroller"),
-  favorite: require("./favoritecontroller"),
-  movieDatabase: require("./movieDatabase"),
+  user,
+  comment,
+  SearchResult,
+  profile,
+  like,
+  favorite,
+  DatabaseEntry,
 };
