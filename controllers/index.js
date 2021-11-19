@@ -1,8 +1,9 @@
 module.exports = {
   usercontroller: require("./usercontroller"),
   comment: require("./commentcontroller"),
-  movie: require("./moviecontroller"),
+  movieSearch: require("./movieSearchcontroller"),
   profile: require("./profilecontroller"),
   like: require("./likecontroller"),
   favorite: require("./favoritecontroller"),
+  movieDatabase: require("./movieDatabase"),
 };

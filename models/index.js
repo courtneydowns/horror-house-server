@@ -2,9 +2,10 @@ const User = require("./user");
 const Review = require("./review");
 const Profile = require("./profile");
 const Comment = require("./comment");
-const Movie = require("./movie");
+const MovieDatabase = require("./movieDatabase");
 const Like = require("./like");
 const Favorite = require("./favorite");
+const MovieSearch = require("./movieSearch");
 
 //USER and REVIEW
 User.hasMany(Review);
@@ -19,9 +20,18 @@ User.hasMany(Comment);
 Comment.belongsTo(User);
 
 //MOVIE, REVIEW, COMMENT
-Movie.hasMany(Review);
-Review.belongsTo(Movie);
+MovieSearch.hasMany(Review);
+Review.belongsTo(MovieSearch);
 Review.hasMany(Comment);
+Like.hasOne(MovieSearch);
+MovieSearch.hasMany(Like);
+
+//MOVIE, REVIEW, COMMENT, FAVORITE
+MovieDatabase.hasMany(Review);
+Review.belongsTo(MovieDatabase);
+Review.hasMany(Comment);
+Favorite.hasOne(MovieDatabase);
+MovieDatabase.hasMany(Favorite);
 
 //LIKES
 Like.belongsTo(User);
@@ -40,7 +50,8 @@ module.exports = {
   Review,
   Profile,
   Comment,
-  Movie,
+  MovieSearch,
+  MovieDatabase,
   Like,
   Favorite,
 };

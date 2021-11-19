@@ -22,8 +22,12 @@ app.use("/profile", profile);
 let comment = require("./controllers/commentcontroller");
 app.use("/comment", comment);
 
-let movie = require("./controllers/moviecontroller");
-app.use("/movie", movie);
+let movieSearch = require("./controllers/movieSearch");
+app.use("/movie-search", movieSearch);
+
+let movieDatabase = require("./controllers/movieDatabase", movieDatabase);
+
+let movieDatabase = require("./controllers/movie");
 
 let favorite = require("./controllers/favoritecontroller");
 app.use("/favorite", favorite);
