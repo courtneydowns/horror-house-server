@@ -5,26 +5,27 @@ const app = express();
 const sequelize = require("./db");
 const PORT = process.env.port;
 
+const controllers = require("./controllers");
+
 let user = require("./controllers/usercontroller");
-app.use("/user", user);
+let review = require("./controllers/reviewcontroller");
+let profile = require("./controllers/profilecontroller");
+let comment = require("./controllers/commentcontroller");
 
 app.use(require("./middleware/headers"));
+
 app.use(express.json());
 
-let review = require("./controllers/reviewcontroller");
+app.use("/user", user);
+
 app.use("/review", review);
 
-let like = require("./controllers/likecontroller");
-app.use("/like", like);
-
-let profile = require("./controllers/profilecontroller");
 app.use("/profile", profile);
 
-let comment = require("./controllers/commentcontroller");
 app.use("/comment", comment);
 
-let favorite = require("./controllers/favoritecontroller");
-app.use("/favorite", favorite);
+app.use("/favorite", controllers.favorite);
+app.use("/like", controllers.like);
 
 // let searchComment = require("./controllers/searchComment");
 // app.use("/movie-search-comment", searchComment);

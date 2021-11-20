@@ -23,15 +23,12 @@ router.get("search/:title", validateSession, function (req, res) {
 
 /*CREATING A COMMENT ASSIGNED TO MOVIE (SEARCH)*/
 router.post("/search/:title", validateSession, function (req, res) {
-  const { comment, seenMovie, wantToWatchMovie } = req.body;
-  const { id } = req.user;
-  const { title } = req.params;
   const commentEntry = {
-    comment,
-    seenMovie,
-    wantToWatchMovie,
-    id,
-    title,
+    comment: req.body.comment.comment,
+    seenMovie: req.body.comment.seenMovie,
+    wantToWatchMovie: req.body.comme.wantToWatchMovie,
+    userId: req.user.id,
+    title: req.params.imdbId,
   };
   Comment.create(commentEntry)
     .then((comment) => res.status(200).json(comment))
@@ -39,15 +36,13 @@ router.post("/search/:title", validateSession, function (req, res) {
 });
 
 /*EDIT COMMENT (FROM SEARCH)*/
-router.put("/search/edit/:id", validateSession, function (req, res) {
-  const { comment, seenMovie, wantToWatchMovie } = req.body;
-  const { id } = req.user;
+router.put("/search/edit/:title", validateSession, function (req, res) {
   const updateComment = {
-    comment,
-    seenMovie,
-    wantToWatchMovie,
+    comment: req.body.comment.comment,
+    seenMovie: req.body.comment.seenMovie,
+    wantToWatchMovie: req.body.comme.wantToWatchMovie,
   };
-  const query = { where: { id: req.params.id, id } };
+  const query = { where: { title: req.params.imdbId, userId: req.user.id } };
   Comment.update(updateComment, query)
     .then((comment) =>
       res.status(200).json({ message: "Your comment has been updated." })
@@ -57,8 +52,6 @@ router.put("/search/edit/:id", validateSession, function (req, res) {
 
 /*DELETE A COMMENT FROM SEARCH (WITH ADMIN PRIVILEGES)*/
 router.delete("/delete/search/:id", validateSession, function (req, res) {
-  const { id } = req.params;
-  const query = { where: { id } };
   console.log(req.user);
   Comment.findOne(query)
     .then((comment) => {
@@ -85,15 +78,13 @@ router.get("/database/:id", validateSession, function (req, res) {
 });
 
 /*CREATING A COMMENT ASSIGNED TO MOVIE (DATABASE)*/
-router.post("/create/database/:id", validateSession, function (req, res) {
-  const { comment, seenMovie, wantToWatchMovie } = req.body;
-  const { id } = req.params;
+router.post("/search/:id", validateSession, function (req, res) {
   const commentEntry = {
-    comment,
-    seenMovie,
-    wantToWatchMovie,
+    comment: req.body.comment.comment,
+    seenMovie: req.body.comment.seenMovie,
+    wantToWatchMovie: req.body.comme.wantToWatchMovie,
     userId: req.user.id,
-    id,
+    id: req.params.id,
   };
   Comment.create(commentEntry)
     .then((comment) => res.status(200).json(comment))
@@ -101,16 +92,14 @@ router.post("/create/database/:id", validateSession, function (req, res) {
 });
 
 /*EDIT COMMENT (DATABASE)*/
-router.put("/edit/database/:id", validateSession, function (req, res) {
-  const { comment, seenMovie, wantToWatchMovie } = req.body;
-  const { id } = req.params;
+router.put("/search/edit/:id", validateSession, function (req, res) {
   const updateComment = {
-    comment,
-    seenMovie,
-    wantToWatchMovie,
+    comment: req.body.comment.comment,
+    seenMovie: req.body.comment.seenMovie,
+    wantToWatchMovie: req.body.comme.wantToWatchMovie,
   };
-  const query = { where: { id: req.params.id, id } };
-  Review.update(updateComment, query)
+  const query = { where: { id: req.params.id, userId: req.user.id } };
+  Comment.update(updateComment, query)
     .then((comment) =>
       res.status(200).json({ message: "Your comment has been updated." })
     )
@@ -118,9 +107,7 @@ router.put("/edit/database/:id", validateSession, function (req, res) {
 });
 
 /*DELETE A COMMENT FROM SEARCH (WITH ADMIN PRIVILEGES)*/
-router.delete("/delete/database/:id", validateSession, function (req, res) {
-  const { id } = req.params;
-  const query = { where: { id } };
+router.delete("/delete/search/:id", validateSession, function (req, res) {
   console.log(req.user);
   Comment.findOne(query)
     .then((comment) => {

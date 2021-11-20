@@ -35,7 +35,7 @@ const SearchResult = db.define("search_result", {
     allowNull: false,
   },
   imdbId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },

@@ -4,15 +4,14 @@ const { Profile } = require("../models");
 const validateSession = require("../middleware/validateSession");
 
 /*CREATE PROFILE*/
-router.post("/create", validateSession, async (req, res) => {
-  const { bio, favoriteHorrorMovies, recommend, dontRecommend, wantToWatch } =
-    req.body;
+router.post("/create", validateSession, function (req, res) {
   const profileCreate = {
-    bio,
-    favoriteHorrorMovies,
-    recommend,
-    dontRecommend,
-    wantToWatch,
+    bio: req.body.profile.bio,
+    favoriteHorrorMovies: req.body.profile.favoriteHorrorMovies,
+    wantToWatch: req.body.profile.wantToWatch,
+    recommend: req.body.profile.recommend,
+    dontRecommend: req.body.profile.dontRecommend,
+    userId: req.user.id,
   };
   Profile.create(profileCreate)
     .then((post) => res.status(200).json(post))
@@ -21,13 +20,12 @@ router.post("/create", validateSession, async (req, res) => {
 
 /*EDIT PROFILE*/
 router.put("/edit", validateSession, function (req, res) {
-  const { id } = req.user;
-  const query = { where: { id }, returning: true };
+  const query = { where: { userId: req.user.id }, returning: true };
   Profile.update(req.body.profile, query)
     .then((profile) =>
       res.status(200).json({
         profile: profile[1][0],
-        message: "Your profile has been updated!",
+        message: "Your profile has been updated.",
       })
     )
     .catch((err) => res.status(500).json({ error: err }));

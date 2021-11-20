@@ -7,101 +7,64 @@ const bcrypt = require("bcryptjs");
 const validateSession = require("../middleware/validateSession");
 
 /*SIGN UP FOR NEW USER*/
-router.post("/signup", (req, res) => {
-  const { password, email, username, profilePhoto } = req.body;
-
+router.post("/signup", function (req, res) {
   User.create({
-    passwordhash: bcrypt.hashSync(password, 13),
-    username,
-    email,
-    profilePhoto,
+    profilePhoto: req.body.user.profilePhoto,
+    username: req.body.user.username,
+    email: req.body.user.email,
+    password: bcrypt.hashSync(req.body.user.password, 13),
+    isAdmin: req.body.user.isAdmin,
   })
-    .then((user) => {
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: 60 * 60 * 24,
-      });
-      res.json(200).json({
-        user: {
-          id: user.id,
-          email,
-          username,
-        },
-        message: `Success! Account created for ${username}`,
+    .then(function createSuccess(user) {
+      let token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: 60 * 60 * 270,
+        }
+      );
+      res.json({
+        user: user,
+        message: "User successfully created!",
         sessionToken: token,
-        sucess: true,
       });
     })
-    .catch((err) => {
-      res.status(500).json({ error: err });
-    });
+    .catch((err) => res.status(500).json({ error: err }));
 });
 
 /*LOGIN*/
-router.post("/", (req, res) => {
-  const { username, password } = req.body;
+router.post("/", function (req, res) {
+  console.log(process.env.JWT_SECRET);
   User.findOne({
-    where: { username },
+    where: {
+      username: req.body.user.username,
+    },
   })
-    .then((user) => {
-      console.log(user);
+    .then(function loginSuccess(user) {
       if (user) {
-        bcrypt.compare(password, user.passwordhash, (err, match) => {
+        bcrypt.compare(req.body.user.password, user.password, (err, match) => {
           if (match) {
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-              expiresIn: 60 * 60 * 24,
-            });
-            delete user.passwordhash;
+            let token = jwt.sign(
+              { id: user.id, username: user.username },
+              process.env.JWT_SECRET,
+              { expiresIn: 60 * 60 * 270 }
+            );
+
             res.status(200).json({
-              user,
-              message: `Success! ${user.username} logged in!`,
-              success: true,
+              user: user,
+              message: "User successfully logged in!",
               sessionToken: token,
             });
           } else {
-            res.status(502).send({ message: "Incorrect password" });
+            res.status(403).json({ error: "Password is incorrect" });
           }
         });
       } else {
-        res.status(500).json({ message: "User does not exist" });
+        res.status(500).json({ error: "User does not exist." });
       }
     })
-    .catch((err) =>
-      res.status(500).json({ message: "Something went wrong", err })
-    );
+    .catch((err) => res.status(500).json({ error: err }));
 });
-
-/*LOGIN*/
-// router.post("/", (req, res) => {
-//   console.log(process.env.JWT_SECRET);
-//   const { username, password } = req.body;
-//   User.findOne({
-//     where: {
-//       username: { username },
-//     },
-//   })
-//     .then((user) => {
-//       if (user) {
-//         bcrypt.compare(password, user.passwordhash, (err, match) => {
-//           if (match) {
-//             const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-//               expiresIn: 60 * 60 * 270,
-//             });
-//             delete user.passwordhash;
-//             res.status(200).json({
-//               user: user,
-//               message: "User successfully logged in!",
-//               sessionToken: token,
-//             });
-//           } else {
-//             res.status(403).json({ error: "Password is incorrect" });
-//           }
-//         });
-//       } else {
-//         res.status(500).json({ error: "User does not exist." });
-//       }
-//     })
-//     .catch((err) => res.status(500).json({ error: err }));
-// });
 
 /*UPDATE PASSWORD*/
 router.post("/update-password", validateSession, async (req, res) => {
