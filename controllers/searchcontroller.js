@@ -10,10 +10,10 @@ router.post("/", function (req, res) {
 });
 
 /* GET MOVIE BY NAME */
-// router.get("/:name", function (req, res) {
-//   Movie.findOne({ where: { name: req.params.name }, include: Comment })
-//     .then((movie) => res.status(200).json(movie))
-//     .catch((err) => res.status(500).json({ error: err }));
-// });
+router.get("/:name", function (req, res) {
+  Movie.findOne({ where: { name: req.params.name }, include: Comment })
+    .then((movie) => res.status(200).json(movie))
+    .catch((err) => res.status(500).json({ error: err }));
+});
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const MovieSearch = db.define("search-result", {
+const SearchResult = db.define("search_result", {
   Poster: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -34,6 +34,11 @@ const MovieSearch = db.define("search-result", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  imdbId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    unique: true,
+  },
 });
 
-module.exports = MovieSearch;
+module.exports = SearchResult;

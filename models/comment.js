@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const db = require("../db");
 
-const DatabaseComment = db.define("comment", {
+const Comment = db.define("comment", {
   comment: {
     type: DataTypes.TEXT,
     allowNull: false,
@@ -10,20 +10,23 @@ const DatabaseComment = db.define("comment", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  notSeenMovie: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   wantToWatchMovie: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  imdbId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    primaryKey: true,
+  },
   id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    unique: true,
+    allowNull: true,
     primaryKey: true,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
   },
 });
 
-module.exports = DatabaseComment;
+module.exports = Comment;

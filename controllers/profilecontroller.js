@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Profile, User } = require("../models");
+const { Profile } = require("../models");
 const validateSession = require("../middleware/validateSession");
 
 /*CREATE PROFILE*/
@@ -35,8 +35,9 @@ router.put("/edit", validateSession, function (req, res) {
 
 /*VIEW OWN PROFILE*/
 router.get("/", validateSession, function (req, res) {
+  const { id } = req.user;
   const query = {
-    where: { userId: req.user.id },
+    where: { id },
   };
   Profile.findOne(query)
     .then((profile) => res.status(200).json(profile))
@@ -44,7 +45,7 @@ router.get("/", validateSession, function (req, res) {
 });
 
 /*GET USER'S PROFILE*/
-router.get("/:username", validateSession, function (req, res) {
+router.get("/:username", validateSession, async (req, res) => {
   const { id } = req.params;
   const { userName } = req.user;
   const getUserProfile = {
@@ -58,7 +59,8 @@ router.get("/:username", validateSession, function (req, res) {
 
 /*DELETE PROFILE*/
 router.delete("/delete/:id", validateSession, function (req, res) {
-  const query = { where: { id: req.params.id, userId: req.user.id } };
+  const { id } = req.user;
+  const query = { where: { id: req.params.id, id } };
   Profile.destroy(query)
     .then((profile) =>
       res

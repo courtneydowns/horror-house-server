@@ -10,7 +10,7 @@ router.get("/", validateSession, function (req, res) {
     .catch((err) => res.status(500).json({ error: err }));
 });
 
-/* GET ALL COMMENTS FOR A MOVIE*/
+/* GET ALL COMMENTS FOR A MOVIE (SEARCH)*/
 router.get("comment/:imdbId", validateSession, function (req, res) {
   Comment.findAll({
     where: {

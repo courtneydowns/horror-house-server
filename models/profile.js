@@ -22,9 +22,6 @@ const Profile = db.define("profile", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  // userId: {
-  //   type: DataTypes.INTEGER,
-  // },
 });
 
 module.exports = Profile;

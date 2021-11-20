@@ -1,71 +1,66 @@
 const User = require("./user");
 const Review = require("./review");
 const Profile = require("./profile");
-const Comment = require("./searchComment");
+const Comment = require("./comment");
 const MovieDatabase = require("./movieDatabase");
-const Like = require("./like");
-const Favorite = require("./favorite");
-const MovieSearch = require("./movieSearch");
-const SearchComment = require("./searchComment");
-const DatabaseComment = require("./databaseComment");
+const Like = require("./likeReview");
+const Movie = require("./favoritemovie");
+const SearchResult = require("./searchResults");
 
 //USER
-User.hasMany(Review);
-Review.belongsTo(User);
+User.hasMany(Review), { foreignKey: "ownerId" };
+Review.belongsTo(User), { foreignKey: "reviewAuthor" };
 User.hasOne(Profile);
 Profile.belongsTo(User);
 User.hasMany(Comment);
-SearchComment.belongsTo(User);
-DatabaseComment.belongsTo(User);
+Comment.belongsTo(User), { foreignKey: "commentAuthor" };
 
 //MOVIE, REVIEW, COMMENT
-MovieSearch.hasMany(Review);
-Review.belongsTo(MovieSearch);
-Review.hasMany(SearchComment);
-Review.hasMany(DatabaseComment);
-Like.hasOne(MovieSearch);
+SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
+Review.belongsTo(SearchResult), { foreignKey: "reviewAuthor" };
+Review.hasMany(Comment), { foreignKey: "reviewAuthor" };
+// Like.hasOne(SearchResult);
 
 //MOVIE, REVIEW, COMMENT, FAVORITE
-MovieDatabase.hasMany(Review);
-Review.belongsTo(MovieDatabase);
-MovieSearch.hasMany(Review);
-Review.hasMany(SearchComment);
-Review.hasMany(DatabaseComment);
-Favorite.belongsTo(MovieDatabase);
-MovieDatabase.hasMany(Favorite);
-Favorite.belongsTo(MovieSearch);
-MovieSearch.hasMany(Favorite);
+MovieDatabase.hasMany(Review), { foreignKey: "reviewAuthor" };
+Review.belongsTo(MovieDatabase), { foreignKey: "reviewAuthor" };
+SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
+Review.hasMany(Comment), { foreignKey: "reviewAuthor" };
+// Favorite.belongsTo(MovieDatabase), { foreignKey: "favorite_author" };
+// MovieDatabase.hasMany(Favorite), { foreignKey: "favorite_author" };
+// Favorite.belongsTo(MovieDatabase), { foreignKey: "favoriteAuthor" };
+// Like.belongsTo(Review), { foreignKey: "reviewAuthor" };
+// MovieDatabase.hasMany(Favorite), { foreignKey: "favoriteAuthor" };
 
 //MOVIE SEARCH RESULTS, REVIEW, COMMENT
-MovieSearch.hasMany(Review);
-Review.belongsTo(MovieSearch);
-Review.hasMany(SearchComment);
-Review.hasMany(DatabaseComment);
-SearchComment.belongsTo(Review);
+SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
+Review.belongsTo(SearchResult), { foreignKey: "reviewAuthor" };
+Review.hasMany(Comment), { foreignKey: "reviewAuthor" };
+// Review.hasMany(DatabaseComment);
+Comment.belongsTo(Review), { foreignKey: "reviewAuthor" };
 
 //MOVIE DATABASE, REVIEW, COMMENT
-MovieDatabase.hasMany(Review);
-Review.belongsTo(MovieDatabase);
-MovieDatabase.hasMany(DatabaseComment);
-MovieSearch.hasMany(SearchComment);
-DatabaseComment.belongsTo(Review);
-Like.hasOne(MovieDatabase);
+MovieDatabase.hasMany(Comment);
+SearchResult.hasMany(Comment);
+// DatabaseComment.belongsTo(Review);
+Comment.belongsTo(Review);
+// MovieDatabase.hasMany(Favorite), { foreignKey: "favoriteAuthor" };
 
 //LIKES
-Like.belongsTo(User);
-User.hasMany(Like);
+// Like.belongsTo(User);
+// User.hasMany(Like);
 
 //FAVORITES
-Favorite.belongsTo(User);
-User.hasMany(Favorite);
+Movie.belongsTo(User), { foreignKey: "favoriteAuthor" };
+User.hasMany(Movie), { foreignKey: "favoriteAuthor" };
 
 module.exports = {
   User,
   Review,
   Profile,
   Comment,
-  MovieSearch,
+  SearchResult,
   MovieDatabase,
   Like,
-  Favorite,
+  // Favorite,
 };

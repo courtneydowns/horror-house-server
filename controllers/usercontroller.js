@@ -8,21 +8,22 @@ const validateSession = require("../middleware/validateSession");
 
 /*SIGN UP FOR NEW USER*/
 router.post("/signup", (req, res) => {
-  const { password, email, username, profileImage } = req.body;
+  const { password, email, username, profilePhoto } = req.body;
 
   User.create({
     passwordhash: bcrypt.hashSync(password, 13),
     username,
     email,
-    profileImage,
+    profilePhoto,
   })
     .then((user) => {
-      let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: 60 * 60 * 24,
       });
       res.json(200).json({
         user: {
           id: user.id,
+          email,
           username,
         },
         message: `Success! Account created for ${username}`,
@@ -34,6 +35,8 @@ router.post("/signup", (req, res) => {
       res.status(500).json({ error: err });
     });
 });
+
+/*LOGIN*/
 router.post("/", (req, res) => {
   const { username, password } = req.body;
   User.findOne({
@@ -50,7 +53,7 @@ router.post("/", (req, res) => {
             delete user.passwordhash;
             res.status(200).json({
               user,
-              message: `Success! ${username.name} logged in!`,
+              message: `Success! ${user.username} logged in!`,
               success: true,
               sessionToken: token,
             });
@@ -68,37 +71,37 @@ router.post("/", (req, res) => {
 });
 
 /*LOGIN*/
-router.post("/", (req, res) => {
-  console.log(process.env.JWT_SECRET);
-  const { username, password } = req.body;
-  User.findOne({
-    where: {
-      username: { username },
-    },
-  })
-    .then((user) => {
-      if (user) {
-        bcrypt.compare(password, user.passwordhash, (err, match) => {
-          if (match) {
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-              expiresIn: 60 * 60 * 270,
-            });
-            delete user.passwordhash;
-            res.status(200).json({
-              user: user,
-              message: "User successfully logged in!",
-              sessionToken: token,
-            });
-          } else {
-            res.status(403).json({ error: "Password is incorrect" });
-          }
-        });
-      } else {
-        res.status(500).json({ error: "User does not exist." });
-      }
-    })
-    .catch((err) => res.status(500).json({ error: err }));
-});
+// router.post("/", (req, res) => {
+//   console.log(process.env.JWT_SECRET);
+//   const { username, password } = req.body;
+//   User.findOne({
+//     where: {
+//       username: { username },
+//     },
+//   })
+//     .then((user) => {
+//       if (user) {
+//         bcrypt.compare(password, user.passwordhash, (err, match) => {
+//           if (match) {
+//             const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+//               expiresIn: 60 * 60 * 270,
+//             });
+//             delete user.passwordhash;
+//             res.status(200).json({
+//               user: user,
+//               message: "User successfully logged in!",
+//               sessionToken: token,
+//             });
+//           } else {
+//             res.status(403).json({ error: "Password is incorrect" });
+//           }
+//         });
+//       } else {
+//         res.status(500).json({ error: "User does not exist." });
+//       }
+//     })
+//     .catch((err) => res.status(500).json({ error: err }));
+// });
 
 /*UPDATE PASSWORD*/
 router.post("/update-password", validateSession, async (req, res) => {
@@ -112,12 +115,12 @@ router.post("/update-password", validateSession, async (req, res) => {
             //change password
             const passwordhash = bcrypt.hashSync(newPassword, 13);
             await user.update({ passwordhash });
-            res.status(200).json({ sucess: true });
+            res.status(200).json({ success: true });
           } else {
             res.status(502).json({
               message: "Incorrect Password!",
               err,
-              sucess: false,
+              success: false,
             });
           }
         })
@@ -143,6 +146,82 @@ router.get("/search/:string", validateSession, async (req, res) => {
       return { ...user.dataValues, url: `/main/profile/${user.id}` };
     });
     res.status(200).json({ success: true, users, message: "success!" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error, message: "Something went wrong!" });
+  }
+});
+
+/*FOLLOW USER*/
+router.post("/follow/:userId", validateSession, async (req, res) => {
+  const { user } = req;
+  const { userId } = req.params;
+  const followed = await User.findOne({ where: { id: parseInt(userId) } });
+  const result2 = await followed.update({
+    followers: [...newSet([...followed.followers, parseInt(user.id)])],
+  });
+  const result = await user.update({
+    following: [...new Set([...user.following, parseInt(userId)])],
+  });
+  res
+    .status(200)
+    .json({
+      success: true,
+      following: result.following,
+      followers: result2.followers,
+      message: "Success!",
+    })
+    .catch((error) =>
+      res.status(500).json({ error, message: "Oops. Something went wrong!" })
+    );
+});
+
+/*UNFOLLOW USER*/
+router.post("/unfollow/:userId", validateSession, async (req, res) => {
+  try {
+    const { user } = req;
+    const { userId } = req.params;
+    const unfollowed = await User.findOne({ where: { id: parseInt(userId) } });
+    const result2 = await unfollowed.update({
+      followers: [
+        ...new Set([
+          ...unfollowed.followers.filter((f) => f !== parseInt(user.id)),
+        ]),
+      ],
+    });
+    const result = await user.update({
+      following: [
+        ...new Set([...user.following.filter((f) => f !== parseInt(userId))]),
+      ],
+    });
+    // console.log(result);
+    res.status(200).json({
+      success: true,
+      following: result.following,
+      followers: result2.followers,
+      message: "Success!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error, message: "Something went wrong!" });
+  }
+});
+
+/*GET FOLLOWING AND FOLLOWERS*/
+router.get("/follows/:userId", validateSession, async (req, res) => {
+  try {
+    const { following, followers } =
+      req.user.id === req.params.userId
+        ? req.user
+        : await User.findOne({
+            where: { id: req.params.userId },
+            // attributes: ["following", "followers"],
+          });
+    const users = await User.findAll({
+      where: { id: { [Op.in]: [...new Set([...following, ...followers])] } },
+      attributes: ["username", "photo", "role", "id", "email"],
+    });
+    res.status(200).json({ users, success: true, message: "Success!" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error, message: "Something went wrong!" });

@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+// db = require("./db");
 const app = express();
 const sequelize = require("./db");
 const PORT = process.env.port;
@@ -19,21 +20,28 @@ app.use("/like", like);
 let profile = require("./controllers/profilecontroller");
 app.use("/profile", profile);
 
-// let searchComment = require("./controllers/searchComment");
-// app.use("/movie-search-comment", searchComment);
-
-let movieSearch = require("./controllers/moviesearchcontroller");
-app.use("/movie-search", movieSearch);
-
-let movieDatabase = require("./controllers/moviedatabasecontroller");
-app.use("/movie-database", movieDatabase);
+let comment = require("./controllers/commentcontroller");
+app.use("/comment", comment);
 
 let favorite = require("./controllers/favoritecontroller");
 app.use("/favorite", favorite);
 
+// let searchComment = require("./controllers/searchComment");
+// app.use("/movie-search-comment", searchComment);
+
+// let movieSearch = require("./controllers/moviesearchcontroller");
+// app.use("/movie-search", movieSearch);
+
+// let movieDatabase = require("./controllers/moviedatabasecontroller");
+// app.use("/movie-database", movieDatabase);
+
 sequelize.sync({
   // force: true,
 });
+
+// db.sync({
+//   force: true,
+// });
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is listening on port ${process.env.PORT}`);

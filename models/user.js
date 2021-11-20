@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const db = require("../db");
 
 const User = db.define("user", {
-  profileImage: {
+  profilePhoto: {
     type: DataTypes.STRING(500),
     allowNull: false,
   },
