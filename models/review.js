@@ -22,6 +22,14 @@ const Review = db.define("review", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  searchId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  DatabaseId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
 });
 
 module.exports = Review;
