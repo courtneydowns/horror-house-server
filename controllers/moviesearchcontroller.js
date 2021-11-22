@@ -10,8 +10,8 @@ router.post("/", function (req, res) {
 });
 
 /* GET MOVIE BY NAME */
-router.get("/:name", function (req, res) {
-  Movie.findOne({ where: { name: req.params.name }, include: Comment })
+router.get("/:title", function (req, res) {
+  Movie.findOne({ where: { title: req.params.title }, include: Comment })
     .then((movie) => res.status(200).json(movie))
     .catch((err) => res.status(500).json({ error: err }));
 });

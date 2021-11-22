@@ -14,18 +14,16 @@ const Comment = db.define("comment", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  imdbId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    primaryKey: true,
-  },
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    primaryKey: true,
-  },
   userId: {
     type: DataTypes.INTEGER,
+  },
+  searchId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  databaseId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
 });
 

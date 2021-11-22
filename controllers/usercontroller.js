@@ -1,6 +1,5 @@
 const express = require("express");
 const { User } = require("../models");
-const { Op } = require("sequelize");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -8,24 +7,21 @@ const validateSession = require("../middleware/validateSession");
 
 /*SIGN UP FOR NEW USER*/
 router.post("/signup", function (req, res) {
+  const { profilePhoto, username, email, password, isAdmin } = req.body;
   User.create({
-    profilePhoto: req.body.user.profilePhoto,
-    username: req.body.user.username,
-    email: req.body.user.email,
-    password: bcrypt.hashSync(req.body.user.password, 13),
-    isAdmin: req.body.user.isAdmin,
+    profilePhoto,
+    username,
+    email,
+    psswordhash: bcrypt.hashSync(password, 13),
+    isAdmin,
   })
-    .then(function createSuccess(user) {
-      let token = jwt.sign(
-        { id: user.id, username: user.username },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: 60 * 60 * 270,
-        }
-      );
-      res.json({
-        user: user,
-        message: "User successfully created!",
+    .then(function signnupSuccess(user) {
+      let token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+        expiresIn: 60 * 60 * 640,
+      });
+      res.status(200).json({
+        user,
+        message: `Success! Profile for ${profile_name} created!`,
         sessionToken: token,
       });
     })
@@ -34,36 +30,36 @@ router.post("/signup", function (req, res) {
 
 /*LOGIN*/
 router.post("/", function (req, res) {
+  const { username, password } = req.body;
   console.log(process.env.JWT_SECRET);
   User.findOne({
     where: {
-      username: req.body.user.username,
+      username: username,
     },
   })
-    .then(function loginSuccess(user) {
+    .then((user) => {
       if (user) {
-        bcrypt.compare(req.body.user.password, user.password, (err, match) => {
+        bcrypt.compare(password, user.passwordhash, (err, match) => {
           if (match) {
-            let token = jwt.sign(
-              { id: user.id, username: user.username },
-              process.env.JWT_SECRET,
-              { expiresIn: 60 * 60 * 270 }
-            );
-
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+              expiresIn: 86400,
+            });
             res.status(200).json({
-              user: user,
-              message: "User successfully logged in!",
+              user,
+              message: `User ${user.username} logged in!!`,
               sessionToken: token,
             });
           } else {
-            res.status(403).json({ error: "Password is incorrect" });
+            res.status(502).send({ message: "Incorrect Password", err });
           }
         });
       } else {
-        res.status(500).json({ error: "User does not exist." });
+        res.status(500).json({ message: "User does not exist" });
       }
     })
-    .catch((err) => res.status(500).json({ error: err }));
+    .catch((err) =>
+      res.status(500).json({ message: "Something went wrong", err })
+    );
 });
 
 /*UPDATE PASSWORD*/
