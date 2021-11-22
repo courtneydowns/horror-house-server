@@ -16,15 +16,15 @@ User.hasMany(Comment);
 Comment.belongsTo(User), { foreignKey: "commentAuthor" };
 
 //MOVIE, REVIEW, COMMENT
-SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
-Review.belongsTo(SearchResult), { foreignKey: "reviewAuthor" };
+// SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
+// Review.belongsTo(SearchResult), { foreignKey: "reviewAuthor" };
 Review.hasMany(Comment), { foreignKey: "reviewAuthor" };
 // Like.hasOne(SearchResult);
 
 //MOVIE, REVIEW, COMMENT, FAVORITE
-MovieDatabase.hasMany(Review), { foreignKey: "reviewAuthor" };
-Review.belongsTo(MovieDatabase), { foreignKey: "reviewAuthor" };
-SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
+// MovieDatabase.hasMany(Review), { foreignKey: "reviewAuthor" };
+// Review.belongsTo(MovieDatabase), { foreignKey: "reviewAuthor" };
+// SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
 Review.hasMany(Comment), { foreignKey: "reviewAuthor" };
 // Favorite.belongsTo(MovieDatabase), { foreignKey: "favorite_author" };
 // MovieDatabase.hasMany(Favorite), { foreignKey: "favorite_author" };
@@ -33,15 +33,15 @@ Review.hasMany(Comment), { foreignKey: "reviewAuthor" };
 // MovieDatabase.hasMany(Favorite), { foreignKey: "favoriteAuthor" };
 
 //MOVIE SEARCH RESULTS, REVIEW, COMMENT
-SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
-Review.belongsTo(SearchResult), { foreignKey: "reviewAuthor" };
+// // SearchResult.hasMany(Review), { foreignKey: "reviewAuthor" };
+// Review.belongsTo(SearchResult), { foreignKey: "reviewAuthor" };
 Review.hasMany(Comment), { foreignKey: "reviewAuthor" };
 // Review.hasMany(DatabaseComment);
 Comment.belongsTo(Review), { foreignKey: "reviewAuthor" };
 
 //MOVIE DATABASE, REVIEW, COMMENT
-MovieDatabase.hasMany(Comment);
-SearchResult.hasMany(Comment);
+//
+// SearchResult.hasMany(Comment);
 // DatabaseComment.belongsTo(Review);
 Comment.belongsTo(Review);
 // MovieDatabase.hasMany(Favorite), { foreignKey: "favoriteAuthor" };
@@ -62,5 +62,4 @@ module.exports = {
   SearchResult,
   MovieDatabase,
   Like,
-  // Favorite,
 };

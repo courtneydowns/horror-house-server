@@ -38,7 +38,7 @@ Review.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    author: {
+    reviewAuthor: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

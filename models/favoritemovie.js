@@ -37,7 +37,7 @@ Movie.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    author: {
+    favoriteAuthor: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
