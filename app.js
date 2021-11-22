@@ -11,6 +11,7 @@ let user = require("./controllers/usercontroller");
 let review = require("./controllers/reviewcontroller");
 let profile = require("./controllers/profilecontroller");
 let comment = require("./controllers/commentcontroller");
+let searchMovie = require("./controllers/searchmoviecontroller");
 
 app.use(require("./middleware/headers"));
 
@@ -24,14 +25,14 @@ app.use("/profile", profile);
 
 app.use("/comment", comment);
 
+app.use("/search", searchMovie);
+
 app.use("/favorite", controllers.favorite);
 app.use("/like", controllers.like);
+// app.use("/search", controllers.searchMovie);
 
 // let searchComment = require("./controllers/searchComment");
 // app.use("/movie-search-comment", searchComment);
-
-// let movieSearch = require("./controllers/moviesearchcontroller");
-// app.use("/movie-search", movieSearch);
 
 // let movieDatabase = require("./controllers/moviedatabasecontroller");
 // app.use("/movie-database", movieDatabase);

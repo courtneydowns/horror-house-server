@@ -17,13 +17,11 @@ const Comment = db.define("comment", {
   userId: {
     type: DataTypes.INTEGER,
   },
-  searchId: {
+  imdbID: {
     type: DataTypes.STRING,
-    allowNull: true,
   },
-  databaseId: {
+  id: {
     type: DataTypes.INTEGER,
-    allowNull: true,
   },
 });
 
