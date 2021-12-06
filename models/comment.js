@@ -22,6 +22,7 @@ const Comment = db.define("comment", {
   },
   id: {
     type: DataTypes.INTEGER,
+    primaryKey: true,
   },
 });
 

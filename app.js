@@ -1,9 +1,10 @@
 require("dotenv").config();
 const express = require("express");
-// db = require("./db");
 const app = express();
 const sequelize = require("./db");
-const PORT = process.env.port;
+const cors = require("cors");
+// const PORT = process.env.port;
+port = 3001;
 
 const controllers = require("./controllers");
 
@@ -11,9 +12,12 @@ let user = require("./controllers/usercontroller");
 let review = require("./controllers/reviewcontroller");
 let profile = require("./controllers/profilecontroller");
 let comment = require("./controllers/commentcontroller");
-let searchMovie = require("./controllers/searchmoviecontroller");
+let searchmovie = require("./controllers/searchmoviecontroller");
+let database = require("./controllers/moviedatabasecontroller");
 
 app.use(require("./middleware/headers"));
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -25,7 +29,9 @@ app.use("/profile", profile);
 
 app.use("/comment", comment);
 
-app.use("/search", searchMovie);
+app.use("/search", searchmovie);
+
+app.use("/database", database);
 
 app.use("/favorite", controllers.favorite);
 app.use("/like", controllers.like);
@@ -42,12 +48,16 @@ sequelize.sync({
 });
 
 // db.sync({
-//   force: true,
+// force: true,
 // });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is listening on port ${process.env.PORT}`);
+app.listen(port, () => {
+  console.log("Server is listening port " + port);
 });
+
+// app.listen(process.env.PORT, () => {
+//   console.log(`Server is listening on port ${process.env.PORT}`);
+// });
 
 // require("dotenv").config();
 // const express = require("express");

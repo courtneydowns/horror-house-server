@@ -4,7 +4,7 @@ const Profile = require("./profile");
 const Comment = require("./comment");
 const MovieDatabase = require("./movieDatabase");
 const Like = require("./likeReview");
-const Movie = require("./favoritemovie");
+const Movie = require("./favoriteMovie");
 const SearchResult = require("./searchResults");
 
 //USER

@@ -3,26 +3,21 @@ const db = require("../db");
 
 const User = db.define("user", {
   profilePhoto: {
-    type: DataTypes.STRING(500),
+    type: DataTypes.STRING(100),
     allowNull: false,
   },
   username: {
     type: DataTypes.STRING(20),
-    allowNull: false,
     unique: true,
+    allowNull: false,
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false,
     unique: true,
+    allowNull: false,
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
-  },
-  isAdmin: {
-    type: DataTypes.BOOLEAN,
-    allowNull: true,
   },
 });
 
