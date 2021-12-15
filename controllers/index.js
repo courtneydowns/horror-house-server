@@ -1,11 +1,13 @@
 const user = require("./usercontroller");
-const profile = require("./profilecontroller");
 const comment = require("./commentcontroller");
-const review = require("./reviewcontroller");
+const profile = require("./profilecontroller");
+const like = require("./likecontroller");
+const favorite = require("./favoritecontroller");
 
 module.exports = {
   user,
-  profile,
   comment,
-  review,
+  profile,
+  like,
+  favorite,
 };

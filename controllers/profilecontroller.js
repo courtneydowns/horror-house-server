@@ -8,9 +8,10 @@ router.post("/create", validateSession, function (req, res) {
   const profileCreate = {
     bio: req.body.profile.bio,
     favoriteHorrorMovies: req.body.profile.favoriteHorrorMovies,
+    wantToWatch: req.body.profile.wantToWatch,
     recommend: req.body.profile.recommend,
     dontRecommend: req.body.profile.dontRecommend,
-    wantToWatch: req.body.profile.wantToWatch,
+    userId: req.user.id,
   };
   Profile.create(profileCreate)
     .then((post) => res.status(200).json(post))
@@ -24,7 +25,7 @@ router.put("/edit", validateSession, function (req, res) {
     .then((profile) =>
       res.status(200).json({
         profile: profile[1][0],
-        message: "Your profile has been updated!",
+        message: "Your profile has been updated.",
       })
     )
     .catch((err) => res.status(500).json({ error: err }));
@@ -32,8 +33,9 @@ router.put("/edit", validateSession, function (req, res) {
 
 /*VIEW OWN PROFILE*/
 router.get("/", validateSession, function (req, res) {
+  const { id } = req.user;
   const query = {
-    where: { userId: req.user.id },
+    where: { id },
   };
   Profile.findOne(query)
     .then((profile) => res.status(200).json(profile))
@@ -41,10 +43,12 @@ router.get("/", validateSession, function (req, res) {
 });
 
 /*GET USER'S PROFILE*/
-router.get("/:username", validateSession, function (req, res) {
+router.get("/:username", validateSession, async (req, res) => {
+  const { id } = req.params;
+  const { userName } = req.user;
   const getUserProfile = {
-    id: req.params.id,
-    userName: req.user.userName,
+    id,
+    userName,
   };
   Profile.findOne(getUserProfile)
     .then((profile) => res.status(200).json(profile))
@@ -53,7 +57,8 @@ router.get("/:username", validateSession, function (req, res) {
 
 /*DELETE PROFILE*/
 router.delete("/delete/:id", validateSession, function (req, res) {
-  const query = { where: { id: req.params.id, userId: req.user.id } };
+  const { id } = req.user;
+  const query = { where: { id: req.params.id, id } };
   Profile.destroy(query)
     .then((profile) =>
       res
