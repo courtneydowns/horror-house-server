@@ -58,7 +58,7 @@ router.post("/", (req, res) => {
     );
 });
 
-router.get("/checkAvail/:profile_name", async (req, res) => {
+router.get("/checkAvail/:username", async (req, res) => {
   try {
     const { username } = req.params;
     const response = await User.findOne({ where: { username } });
