@@ -1,0 +1,28 @@
+@font-face {
+  font-family: "myFont";
+  src: url("../../assets/Another\ Danger\ Slanted\ -\ Demo.otf")
+    format("truetype");
+}
+
+$font-header: "myFont", sans-serif;
+.selector {
+  font-family: $font-header;
+}
+
+$color-primary: #990000;
+$color-primary-light: #cc0000;
+$color-primary-dark: #6e0000;
+
+$color-secondary-light: #999;
+$color-secondary: #777;
+$color-secondary-dark: #333;
+
+$color-grey-light-1: #f7f7f7;
+$color-grey-light-2: #f0f0f0;
+$color-grey-light-3: #eee;
+$color-grey-light-4: #d6d6d6;
+
+$color-white: #fff;
+$color-black: #000;
+
+$default-font-size: 1.6rem;
