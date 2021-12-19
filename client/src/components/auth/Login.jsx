@@ -7,7 +7,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import {FaGhost} from "react-icons";
+import {FaGhost} from "react-icons/fa"
 import { fontSize } from "@mui/system";
 
 export default function Login({ updateToken }) {
@@ -69,8 +69,8 @@ export default function Login({ updateToken }) {
                 alignItems: 'center',
               }}
             >
-              <Avatar sx={{ m: 1, bgcolor: '#cc0000', fontSize: "3rem" }}>
-                <FaGhost/>
+              <Avatar sx={{ m: 1, bgcolor: '#cc0000'}}>
+              <FaGhost style={{ fontSize: "3rem" }} />
               </Avatar>
               <Typography component="h1" variant="h5">
                 Sign in
